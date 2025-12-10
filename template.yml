@@ -1,0 +1,45 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Minimal Ads API
+
+Globals:
+  Function:
+    Timeout: 5
+    Runtime: nodejs18.x
+    Handler: dist/handler.createAd
+    Environment:
+      Variables:
+        ADS_TABLE: !Ref AdsTable
+        IMAGES_BUCKET: !Ref ImagesBucket
+        TOPIC_ARN: !Ref AdsTopic
+
+Resources:
+  CreateAdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./
+      Events:
+        Api:
+          Type: Api
+          Properties:
+            Path: /ads
+            Method: post
+            Auth:
+              Authorizer: AWS_IAM # (Cognito integration documented in README)
+
+  AdsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  ImagesBucket:
+    Type: AWS::S3::Bucket
+
+  AdsTopic:
+    Type: AWS::SNS::Topic
