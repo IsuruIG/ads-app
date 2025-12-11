@@ -15,7 +15,7 @@ export const putAd = async ({
 }) => {
   await client.send(
     new PutItemCommand({
-      TableName: process.env.ADS_TABLE!,
+      TableName: process.env.DDB_ADS_TABLE!,
       Item: {
         id: { S: id },
         title: { S: title },

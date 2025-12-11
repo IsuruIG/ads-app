@@ -6,7 +6,7 @@ export const uploadImage = async (
   id: string,
   base64: string
 ): Promise<string> => {
-  const bucket = process.env.IMAGES_BUCKET!;
+  const bucket = process.env.S3_IMAGES_BUCKET!;
   const buffer = Buffer.from(base64, "base64");
 
   const key = `ads/${id}.jpg`;
