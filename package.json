@@ -6,7 +6,7 @@
     "build": "tsc",
     "test": "jest --passWithNoTests",
     "sam:build": "sam build",
-    "sam:local": "sam local start-api",
+    "sam:local": "sam build && sam local start-api  ",
     "lint": "eslint . --ext .ts"
   },
   "dependencies": {

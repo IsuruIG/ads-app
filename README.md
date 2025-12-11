@@ -15,13 +15,9 @@ and publishes an SNS notification upon creation.
 
 npm install
 
-### 2. Build
-
-npm run build
-
 ### 3. Start API locally
 
-sam local start-api
+npm run sam:local
 
 ### 4. Run
 
