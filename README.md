@@ -2,18 +2,6 @@
 
 A minimal Ads API that stores ads in DynamoDB, uploads optional images to S3, 
 and publishes an SNS notification upon creation.
-<!-- 
-## Features
-- Node.js + TypeScript Lambda
-- POST /ads endpoint (protected)
-- Cognito auth (mockable locally)
-- DynamoDB storage
-- S3 image upload
-- SNS publish
-- Structured logging
-- Jest unit tests
-- GitHub Actions CI
-- IaC using AWS SAM -->
 
 ## Local Development
 
