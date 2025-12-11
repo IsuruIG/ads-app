@@ -1,0 +1,83 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Transform: AWS::Serverless-2016-10-31
+Description: Minimal Ads API
+
+Globals:
+  Function:
+    Timeout: 10
+    Runtime: nodejs20.x
+    Handler: dist/handlers/post-ad.createAd
+    Environment:
+      Variables:
+        ADS_TABLE: !Ref AdsTable
+        IMAGE_BUCKET: !Ref AdsImageBucket
+        SNS_TOPIC_ARN: !Ref AdsTopic
+        DDB_ENDPOINT: http://host.docker.internal:8000 # * For testing locally.
+        S3_ENDPOINT: http://host.docker.internal:4566 # * For testing locally.
+        SNS_ENDPOINT: http://host.docker.internal:4566 # * For testing locally.
+
+Resources:
+  AdsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      BillingMode: PAY_PER_REQUEST
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: HASH
+
+  AdsImageBucket:
+    Type: AWS::S3::Bucket
+
+  AdsTopic:
+    Type: AWS::SNS::Topic
+
+  CreateAdFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: handlers/post-ad.createAd
+      Runtime: nodejs20.x
+      CodeUri: src/
+      Architectures:
+        - x86_64
+
+      Environment:
+        Variables:
+          ADS_TABLE: !Ref AdsTable
+          IMAGE_BUCKET: !Ref AdsImageBucket
+          SNS_TOPIC_ARN: !Ref AdsTopic
+          DDB_ENDPOINT: http://host.docker.internal:8000 # * For testing locally.
+          S3_ENDPOINT: http://host.docker.internal:4566 # * For testing locally.
+          SNS_ENDPOINT: http://host.docker.internal:4566 # * For testing locally.
+
+      Policies:
+        - DynamoDBCrudPolicy:
+            TableName: !Ref AdsTable
+        - S3WritePolicy:
+            BucketName: !Ref AdsImageBucket
+        - SNSPublishMessagePolicy:
+            TopicName: !GetAtt AdsTopic.TopicName
+
+      Events:
+        ApiRequest:
+          Type: Api
+          Properties:
+            Path: /ads
+            Method: POST
+            Auth:
+              Authorizer: AWS_IAM # * When deploying to a server, swap with Cognito Authorizer.\
+
+    Metadata:
+      BuildMethod: esbuild
+      BuildProperties:
+        Minify: true
+        Target: "es2020"
+        Sourcemap: true
+        EntryPoints:
+          - handlers/post-ad.ts
+
+Outputs:
+  ApiUrl:
+    Value: !Sub "https://${ServerlessRestApi}.execute-api.${AWS::Region}.amazonaws.com/Prod/ads"
