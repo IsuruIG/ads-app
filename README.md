@@ -3,7 +3,7 @@
 A minimal Ads API that stores ads in DynamoDB, uploads optional images to S3,
 and publishes an SNS notification upon creation.
 
-## Local Development
+## Local Testing
 
 ## Prerequisites
 
@@ -11,7 +11,10 @@ and publishes an SNS notification upon creation.
 - Must have latest version of Docker [https://www.docker.com/get-started/] installed locally.
 - Must have latest version of AWS SAM CLI [https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html] installed locally.
 
-### 1. Install dependencies
+### 1. Clone the project
+Repository - https://github.com/IsuruIG/ads-app
+
+### 2. Install dependencies
 
 npm install
 
@@ -19,7 +22,7 @@ npm install
 
 npm run sam:local
 
-### 4. Run
+### 4. Run/Test
 
 curl -X POST http://127.0.0.1:3000/ads \
  -H "Authorization: fake" \
