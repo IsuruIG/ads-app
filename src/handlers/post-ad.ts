@@ -67,7 +67,7 @@ export const createAd: APIGatewayProxyHandler = async (event) => {
       })
     );
 
-    await Promise.all([addToDbPromise /* sendNotificationPromise */]);
+    await Promise.all([addToDbPromise, sendNotificationPromise]);
 
     log.info("Successfully created an ad.");
 
