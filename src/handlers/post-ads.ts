@@ -5,6 +5,12 @@ import { uploadImage } from "../services/S3Service";
 import { publishAdCreated } from "../services/SNSService";
 import { logger } from "../utils/logger";
 
+export type AdType = {
+  title: string;
+  price: number;
+  imageBase64?: string;
+};
+
 export const postAdsHandler = async (
   event: APIGatewayProxyEvent
 ): Promise<APIGatewayProxyResult> => {
@@ -16,7 +22,7 @@ export const postAdsHandler = async (
       return { statusCode: 400, body: "Missing body" };
     }
 
-    const { title, price, imageBase64 } = JSON.parse(event.body);
+    const { title, price, imageBase64 } = JSON.parse(event.body) as AdType;
 
     if (!title || typeof price !== "number") {
       return { statusCode: 400, body: "Invalid input" };

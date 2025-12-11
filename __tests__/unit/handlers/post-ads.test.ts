@@ -1,38 +1,25 @@
-import { postAdsHandler } from "../../../src/handlers/post-ads";
 import { APIGatewayProxyEvent } from "aws-lambda";
-import { DynamoDBDocumentClient, PutCommand } from "@aws-sdk/lib-dynamodb";
-import { mockClient } from "aws-sdk-client-mock";
+import { postAdsHandler } from "../../../src/handlers/post-ads";
+import * as ddb from "../../../src/services/DynamoDBService";
+import * as s3 from "../../../src/services/S3Service";
+import * as sns from "../../../src/services/SNSService";
+
+jest.mock("../../../src/services/DynamoDBService");
+jest.mock("../../../src/services/S3Service");
+jest.mock("../../../src/services/SNSService");
 
 // * This includes all tests for postAdsHandler().
-describe("Test postAdsHandler", function () {
-  const ddbMock = mockClient(DynamoDBDocumentClient);
-
-  beforeEach(() => {
-    ddbMock.reset();
-  });
-
-  // * This test invokes postAdsHandler() and compare the result.
-  it("should add id to the table", async () => {
-    const returnedItem = { id: "id1", name: "name1" };
-
-    // Return the specified value whenever the spied put function is called
-    ddbMock.on(PutCommand).resolves({
-      returnedItem,
-    });
-
+describe("Test postAdsHandler", () => {
+  it("creates an ad without image", async () => {
     const event = {
-      httpMethod: "POST",
-      body: '{"id": "id1","name": "name1"}',
+      body: JSON.stringify({ title: "Bike", price: 100 }),
+      requestContext: { requestId: "test-1" },
     } as APIGatewayProxyEvent;
 
-    const result = await postAdsHandler(event);
+    const res = await postAdsHandler(event);
 
-    const expectedResult = {
-      statusCode: 200,
-      body: JSON.stringify(returnedItem),
-    };
-
-    // Compare the result with the expected result
-    expect(result).toEqual(expectedResult);
+    expect(res?.statusCode).toBe(201);
+    expect(ddb.putAd).toHaveBeenCalled();
+    expect(sns.publishAdCreated).toHaveBeenCalled();
   });
 });
