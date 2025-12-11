@@ -5,6 +5,11 @@ and publishes an SNS notification upon creation.
 
 ## Local Development
 
+## Prerequisites
+
+-  Must have Node 20+ installed locally.
+-  Must have latest AWS SAM CLI [https://docs.aws.amazon.com/serverless-application-model/latest/developerguide/install-sam-cli.html] installed locally.
+
 ### 1. Install dependencies
 npm install
 
@@ -14,7 +19,7 @@ npm run build
 ### 3. Start API locally
 sam local start-api
 
-### 4. Invoke
+### 4. Run
 curl -X POST http://127.0.0.1:3000/ads \
   -H "Authorization: fake" \
   -d '{"title":"Test","price":100}'
